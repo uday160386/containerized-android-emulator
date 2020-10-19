@@ -7,24 +7,19 @@ RUN echo "${TZ}" > /etc/timezone
 # Author
 # ---------------------------------------------------------------------- #
 LABEL maintainer ""
-ENV DOCKER_ANDROID_DISPLAY_NAME scb-emulator-android-29
-
+ENV DOCKER_ANDROID_DISPLAY_NAME emulator-android-29
 
 # Update apt-get
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
 # support multiarch: i386 architecture
-# install Java
 # install essential tools
 # Install required packages
 RUN dpkg --add-architecture i386 && \
     apt-get install -y \
-    vim \
     autoconf \
     build-essential \
-    bzip2 \
-    curl \
     gcc \
     git \
     groff \
@@ -38,7 +33,6 @@ RUN dpkg --add-architecture i386 && \
     make \
     ncurses-dev \
     ocaml \
-    openssh-client \
     pkg-config \
     rsync \
     software-properties-common \
@@ -47,6 +41,7 @@ RUN dpkg --add-architecture i386 && \
     zip \
     zlib1g-dev \
     x11vnc \
+    jq \
     --no-install-recommends
 
 # Install Java
@@ -58,12 +53,10 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get clean
 
 # download and install Android SDK
-# https://developer.android.com/studio#command-tools
-
 # Android SDK version
 ENV ANDROID_SDK_VERSION=6609375 
 # Configuring Android API level
-ARG ANDROID_API_LEVEL=29
+ENV ANDROID_API_LEVEL=29
 # Configuring Android Build tool level
 ARG ANDROID_BUILD_TOOLS_LEVEL=30.0.2
 
@@ -82,33 +75,25 @@ ENV LD_LIBRARY_PATH ${ANDROID_SDK_ROOT}/emulator/lib64:${ANDROID_SDK_ROOT}/emula
 ENV QTWEBENGINE_DISABLE_SANDBOX 1
 
 # accept the license agreements of the SDK components
-RUN echo y | /opt/android-sdk/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} --licenses
-RUN echo y | /opt/android-sdk/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "emulator"
-RUN echo y | /opt/android-sdk/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools"
-RUN echo y | /opt/android-sdk/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platforms;android-${ANDROID_API_LEVEL}"
-RUN echo y | /opt/android-sdk/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "build-tools;${ANDROID_BUILD_TOOLS_LEVEL}"
-RUN echo y | /opt/android-sdk/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "system-images;android-${ANDROID_API_LEVEL};google_apis;x86"
-RUN echo y | /opt/android-sdk/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "system-images;android-${ANDROID_API_LEVEL};google_apis;x86_64"
-RUN echo y | /opt/android-sdk/cmdline-tools/tools/bin/sdkmanager --update 
+RUN echo y | ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} --licenses
+RUN echo y | ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "emulator"
+RUN echo y | ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platform-tools"
+RUN echo y | ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "platforms;android-${ANDROID_API_LEVEL}"
+RUN echo y | ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "build-tools;${ANDROID_BUILD_TOOLS_LEVEL}"
 
-# Configuring Android Emulators
-RUN echo no | /opt/android-sdk/cmdline-tools/tools/bin/avdmanager create avd -n "Nexus_1" --abi google_apis/x86 -k "system-images;android-29;google_apis;x86"
-RUN echo no | /opt/android-sdk/cmdline-tools/tools/bin/avdmanager create avd -n "Nexus_2" --abi google_apis/x86_64 -k "system-images;android-29;google_apis;x86_64"
-RUN echo y | /opt/android-sdk/cmdline-tools/tools/bin/sdkmanager --update
-
-
+RUN mkdir -p ${ANDROID_SDK_ROOT}/ma/android-emulator
+COPY /scripts/run_emulators.sh ${ANDROID_SDK_ROOT}/ma/android-emulator
+COPY /scripts/connect_emulators_tosgrid.sh ${ANDROID_SDK_ROOT}/ma/android-emulator
 # Install Appium
 RUN mkdir /opt/appium \
   && cd /opt/appium \
   && npm install appium@latest \
   && ln -s /opt/appium/node_modules/.bin/appium /usr/bin/appium
 
-# setup adb server
-EXPOSE 5037
-
-# set emulator devices port
-EXPOSE 5556
-EXPOSE 5557
-
-# Expose appium server
+# Expose appium server, if more than one emulator is running then need to ru appium with unique port and bootstrap port 
 EXPOSE 4723
+EXPOSE 4725
+
+# Expose android emulator with tcp connection
+EXPOSE 5557
+EXPOSE 5559
