@@ -37,8 +37,8 @@ start_emulator $DEVICE_1 5556,5557
 #starting emulators in backgroud with ports: Devcie-1: 5558 and 5559(tcp)
 start_emulator $DEVICE_2 5558,5559
 n=1
-while [[ `adb -s emulator-5556  get-state` != 'device' ]]; do sleep 30;echo "retry $n times.";n=$(( n+1 )); ;
+while [[ `adb -s emulator-5556  get-state` != 'device' ]]; do sleep 30;echo "retry $n times.";n=$(( n+1 )); done;
 #Running emulators in backgroud with ports: Devcie-2: 5558 and 5559(tcp)
 n=1
-while [[ `adb -s emulator-5558  get-state` != 'device' ]]; do sleep 30;echo "retry $n times.";n=$(( n+1 )); ;
+while [[ `adb -s emulator-5558  get-state` != 'device' ]]; do sleep 30;echo "retry $n times.";n=$(( n+1 )); done;
 echo "Devices are up & running!" 
