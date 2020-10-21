@@ -99,3 +99,5 @@ EXPOSE 4725
 # Expose android emulator with tcp connection
 EXPOSE 5557
 EXPOSE 5559
+
+CMD ["sh", "-c", "tail -f /dev/null"]
