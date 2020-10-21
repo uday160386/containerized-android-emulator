@@ -16,8 +16,9 @@ IMAGE_1="system-images;android-${ANDROID_API_LEVEL};google_apis;x86"
 IMAGE_2="system-images;android-${ANDROID_API_LEVEL};google_apis;x86_64"
 
 echo y | ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} $IMAGE_1
+echo y | /${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --update
 echo y | ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --sdk_root=${ANDROID_SDK_ROOT} $IMAGE_2
-echo y | /opt/android-sdk/cmdline-tools/tools/bin/sdkmanager --update 
+echo y | /${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --update
 
 ############################################# Creating and Managing AVD ################################################
 

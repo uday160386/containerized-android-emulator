@@ -6,9 +6,10 @@ DEVICE_LIST=$1
 #Storing the Selenium Grid details
 SELENIUM_HOST=$2
 SELENIUM_PORT=$3
+ANDROID_EMULATOR=$4
 
 compose_device_to_appium_json() {
-  echo "{\"capabilities\":[{\"deviceName\": \"$1\",\"browserName\": \"chrome\",\"version\":\"11.0\",\"maxInstances\": 2,\"platform\":\"Android\"}],\"configuration\":{\"cleanUpCycle\":3000,\"timeout\":30000,\"proxy\": \"org.openqa.grid.selenium.proxy.DefaultRemoteProxy\",\"url\":\"http://localhost:$2/wd/hub\",\"host\": \"localhost\",\"port\": $2,\"maxSession\": 2,\"register\": true,\"registerCycle\": 5000,\"hubPort\": $SELENIUM_PORT,\"hubHost\": \"$SELENIUM_HOST\"}}"> /opt/appium/json/$1.json
+  echo "{\"capabilities\":[{\"deviceName\": \"$1\",\"browserName\": \"chrome\",\"version\":\"11.0\",\"maxInstances\": 2,\"platform\":\"Android\"}],\"configuration\":{\"cleanUpCycle\":3000,\"timeout\":30000,\"proxy\": \"org.openqa.grid.selenium.proxy.DefaultRemoteProxy\",\"url\":\"http://$4:$2/wd/hub\",\"host\": \"$4\",\"port\": $2,\"maxSession\": 2,\"register\": true,\"registerCycle\": 5000,\"hubPort\": $SELENIUM_PORT,\"hubHost\": \"$SELENIUM_HOST\"}}"> /opt/appium/json/$1.json
 }
 #clean up of existing json files
 rm -rf /opt/appium/json
