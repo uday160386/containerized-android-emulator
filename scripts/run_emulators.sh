@@ -1,7 +1,5 @@
 #!/bin/bash
-#Storing the Selenium Grid details
-SELENIUM_HOST=$2
-SELENIUM_PORT=$3
+
 ## Retrieving the select emulator devices
 DEVICE_LIST=$1
 
@@ -10,7 +8,7 @@ DEVICE_1="Nexus-1"
 DEVICE_2="Nexus-2" 
 
 start_emulator() {
-  nohup emulator -avd $1 -no-accel -no-window -no-audio -ports $2 -gpu swiftshader_indirect -read-only> emulator_info_log.out 2>&1 &
+  nohup emulator -avd $1 -no-accel -no-window -no-audio -ports $2 > emulator_info_log.out 2>&1 &
 }
 ############################################# Installing System Images ################################################
 #System Images List
@@ -39,8 +37,8 @@ start_emulator $DEVICE_1 5556,5557
 #starting emulators in backgroud with ports: Devcie-1: 5558 and 5559(tcp)
 start_emulator $DEVICE_2 5558,5559
 n=1
-while [[ `adb -s emulator-5556  get-state` != 'device' ]]; do sleep 30;echo "retry $n times.";n=$(( n+1 )); done;
+while [[ `adb -s emulator-5556  get-state` != 'device' ]]; do sleep 30;echo "retry $n times.";n=$(( n+1 )); ;
 #Running emulators in backgroud with ports: Devcie-2: 5558 and 5559(tcp)
 n=1
-while [[ `adb -s emulator-5558  get-state` != 'device' ]]; do sleep 30;echo "retry $n times.";n=$(( n+1 )); done;
+while [[ `adb -s emulator-5558  get-state` != 'device' ]]; do sleep 30;echo "retry $n times.";n=$(( n+1 )); ;
 echo "Devices are up & running!" 
