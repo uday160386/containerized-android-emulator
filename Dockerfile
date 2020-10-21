@@ -83,7 +83,9 @@ RUN echo y | ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --sdk_root=$
 
 RUN mkdir -p ${ANDROID_SDK_ROOT}/ma/android-emulator
 COPY /scripts/run_emulators.sh ${ANDROID_SDK_ROOT}/ma/android-emulator
+RUN chmod -R 765 script.sh ${ANDROID_SDK_ROOT}/ma/android-emulator/run_emulators.sh
 COPY /scripts/connect_emulators_tosgrid.sh ${ANDROID_SDK_ROOT}/ma/android-emulator
+RUN chmod -R 765 script.sh ${ANDROID_SDK_ROOT}/ma/android-emulator/connect_emulators_tosgrid.sh
 # Install Appium
 RUN mkdir /opt/appium \
   && cd /opt/appium \
