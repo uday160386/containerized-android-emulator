@@ -1,7 +1,7 @@
 # Base image
 # ---------------------------------------------------------------------- #
 FROM ubuntu:20.04
-FROM node:14.0
+FROM node:14.21.2
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo "${TZ}" > /etc/timezone
 # Author
